@@ -10,6 +10,7 @@ namespace TicTacToe
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Welcome to Tic Tac Toe Game");
             MainGame();
         }
         private static void MainGame()
