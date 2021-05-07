@@ -35,7 +35,7 @@ namespace TicTacToe
                     StartGamingWithComputer();
                 if (whoStartFirst == "U")
                     StartGamingWithUser();
-                Console.WriteLine("If u want to play again write Y or if u want to quit write N ");
+                Console.WriteLine("If u want to quit write N anything else to keep playing");
                 var playAgainNew = Console.ReadLine();
                 playAgain = playAgainNew;
             } while (playAgain != "N");
