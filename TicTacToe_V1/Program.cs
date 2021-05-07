@@ -10,21 +10,42 @@ namespace TicTacToe
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to Tic Tac Toe Game");
             MainGame();
         }
-        private static void MainGame()
+        public static void MainGame()
         {
+            Console.WriteLine("Welcome to Tic Tac Toe Game");
             string[,] arrayPosition = new string[3, 3];
             string[,] arrayGame = new string[3, 3];
-            ShowDefaultSuntetagmenesTouUser(arrayPosition);
+            ShowDefaultSuntetagmenesGiaTonUser(arrayPosition);
             DefaultActiveGame(arrayGame);
             Console.WriteLine("");
-            StartGaming();
+            Console.WriteLine("If u want to play first write U or if u want computer to play first write C");
+            var playAgain = "N";
+            var whoStartFirst = Console.ReadLine();
+            do
+            {
+                while (whoStartFirst != "U" && whoStartFirst != "C")
+                {
+                    Console.WriteLine("If u want to play first write U or if u want computer to play first write C");
+                    var whoStartFirstNew = Console.ReadLine();
+                    whoStartFirst = whoStartFirstNew;
+                }
+                if (whoStartFirst == "C")
+                    StartGamingWithComputer();
+                if (whoStartFirst == "U")
+                    StartGamingWithUser();
+                Console.WriteLine("If u want to play again write Y or if u want to quit write N ");
+                var playAgainNew = Console.ReadLine();
+                playAgain = playAgainNew;
+            } while (playAgain != "N");
+            Console.Clear();
+            Thread.Sleep(1000);
+            Console.WriteLine("\n\tHave a nice day");
         }
-        private static void DefaultActiveGame(string[,] arrayGame)
+        public static void DefaultActiveGame(string[,] arrayGame)
         {
-            Console.WriteLine("\n\nActive Game");
+            Console.WriteLine("\n\nDefault Game");
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -41,7 +62,7 @@ namespace TicTacToe
                 }
             }
         }
-        public static void ShowDefaultSuntetagmenesTouUser(string[,] arrayPosition)
+        public static void ShowDefaultSuntetagmenesGiaTonUser(string[,] arrayPosition)
         {
             Console.WriteLine("Suntetagmenes gia ton xrhsth");
             for (int i = 0; i < 3; i++)
@@ -60,7 +81,7 @@ namespace TicTacToe
                 }
             }
         }
-        public static string XorO()
+        public static string UserPick()
         {
             Console.WriteLine("Pick X or O");
             string pick = Console.ReadLine();
@@ -72,19 +93,38 @@ namespace TicTacToe
             }
             return pick;
         }
-        public static string ComputerPick(string pick)
+        public static string AfterPick(string pick)
         {
             return pick == "X" ? "O" : "X";
         }
+        public static string ComputerRandomPick()
+        {
+            string[] XorO = { "X", "O" };
+            Random random = new Random();
+            int computerRandomPick = random.Next(0, 2);
+            return XorO[computerRandomPick];
+        }
         public static string GetUserMove(string[,] array)
         {
-            Console.WriteLine("What is your move?");
+            Console.WriteLine("\nWhat is your move?");
             string userMove = Console.ReadLine();
-            var a = AvailableMoves(array).Contains(userMove);
+            //var a = AvailableMoves(array).Contains(userMove);
             while (!ValidMoves().OfType<string>().ToList().Contains(userMove) || !AvailableMoves(array).Contains(userMove))
+            //while (!ValidMoves().OfType<string>().ToList().Contains(userMove) && !AvailableMoves(array).Contains(userMove))
             {
-                Console.WriteLine("What is your move?");
+                Console.WriteLine("\nWhat is your move? Write A to see the available moves");
                 string userMoveNew = Console.ReadLine();
+                //if(userMove.Length==1) 
+                if (userMoveNew.Contains("A"))
+                {
+                    Console.WriteLine("");
+                    ShowAvailableMoves(AvailableMoves(array));
+                }
+                //if (Convert.ToInt32(userMoveNew) == 0 && userMoveNew.Length == 1)
+                //{
+                //    Console.WriteLine("");
+                //    ShowAvailableMoves(AvailableMoves(array));
+                //}
                 userMove = userMoveNew;
             }
             return userMove;
@@ -100,16 +140,57 @@ namespace TicTacToe
             }
             return computerMove;
         }
-        public static void StartGaming()
+        public static void StartGamingWithComputer()
         {
             var winner = "";
-            var userPick = XorO();
+            var computerPick = ComputerRandomPick();
+            var userPick = AfterPick(computerPick);
+            Console.WriteLine($"Computer picked {computerPick} so u have {userPick} ");
+            Thread.Sleep(3000);
+            var computerMove = ComputerMove(DefaultGame());
+            Console.WriteLine("\nComputer Move Coming Up");
+            Thread.Sleep(2000);
+            var array = StartRound(computerMove, computerPick);
+            RoundDisplay(array);
+            do
+            {
+                var userMove = GetUserMove(array);
+                var arrayNext = NextRound(userMove, userPick, array);
+                Console.WriteLine("");
+                Console.WriteLine("\nUser Move Coming Up");
+                Thread.Sleep(1000);
+                RoundDisplay(arrayNext);
+                if (Winner(arrayNext))
+                {
+                    winner = "User";
+                    break;
+                }
+                var computerMoveNew = ComputerMove(arrayNext);
+                Console.WriteLine("\nComputer Move Coming Up");
+                Thread.Sleep(2000);
+                var arrayNext1 = NextRound(computerMoveNew, computerPick, arrayNext);
+                Console.WriteLine("");
+                RoundDisplay(arrayNext1);
+                if (Winner(arrayNext1))
+                {
+                    winner = "Computer";
+                    break;
+                }
+                array = arrayNext1;
+
+            } while (AvailableMoves(array).Count != 0);
+            Console.WriteLine(ShowWinner(winner));
+        }
+        public static void StartGamingWithUser()
+        {
+            var winner = "";
+            var userPick = UserPick();
             var userMove = GetUserMove(DefaultGame());
             Console.WriteLine("\nYour Move Coming Up");
             Thread.Sleep(1000);
             var array = StartRound(userMove, userPick);
             RoundDisplay(array);
-            var computerPick = ComputerPick(userPick);
+            var computerPick = AfterPick(userPick);
             do
             {
                 Console.WriteLine("\nComputer Move Coming Up");
@@ -129,17 +210,14 @@ namespace TicTacToe
                 var arrayNext1 = NextRound(userMoveNew, userPick, arrayNext);
                 Console.WriteLine("");
                 RoundDisplay(arrayNext1);
-                if (Winner(arrayNext))
+                //if (Winner(arrayNext))
+                if (Winner(arrayNext1))
                 {
                     winner = "User";
                     break;
                 }
                 array = arrayNext1;
             } while (AvailableMoves(array).Count != 0);
-            // na balw ta available moves
-            //RoundDisplay(array);
-            //return array;
-            // var a = AvailableMoves(array1);
             Console.WriteLine(ShowWinner(winner));
         }
         public static string ShowWinner(string winner)
@@ -213,6 +291,15 @@ namespace TicTacToe
                 }
             }
             return false;
+        }
+        public static void ShowAvailableMoves(List<string> availableMoves)
+        {
+            Console.WriteLine("Available moves below :");
+            foreach (var item in availableMoves)
+            {
+                Console.Write($"{item} \t");
+            }
+            Console.WriteLine("");
         }
         public static List<string> AvailableMoves(string[,] array)
         {
