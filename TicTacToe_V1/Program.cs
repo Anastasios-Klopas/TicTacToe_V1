@@ -272,19 +272,6 @@ namespace TicTacToe
             }
             return arrayPosition;
         }
-        //mallon dn xreiazetai
-        public static bool EmptyCell(string[,] array)
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    if (array[i, j] == "-" || array[i, j] == "X" || array[i, j] == "O")
-                        return true;
-                }
-            }
-            return false;
-        }
         public static void ShowAvailableMoves(List<string> availableMoves)
         {
             Console.WriteLine("Available moves below :");
