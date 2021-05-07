@@ -110,21 +110,14 @@ namespace TicTacToe
             string userMove = Console.ReadLine();
             //var a = AvailableMoves(array).Contains(userMove);
             while (!ValidMoves().OfType<string>().ToList().Contains(userMove) || !AvailableMoves(array).Contains(userMove))
-            //while (!ValidMoves().OfType<string>().ToList().Contains(userMove) && !AvailableMoves(array).Contains(userMove))
             {
                 Console.WriteLine("\nWhat is your move? Write A to see the available moves");
                 string userMoveNew = Console.ReadLine();
-                //if(userMove.Length==1) 
                 if (userMoveNew.Contains("A"))
                 {
                     Console.WriteLine("");
                     ShowAvailableMoves(AvailableMoves(array));
                 }
-                //if (Convert.ToInt32(userMoveNew) == 0 && userMoveNew.Length == 1)
-                //{
-                //    Console.WriteLine("");
-                //    ShowAvailableMoves(AvailableMoves(array));
-                //}
                 userMove = userMoveNew;
             }
             return userMove;
